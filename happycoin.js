@@ -5,17 +5,16 @@ const array = new BigUint64Array(1);
 function random64() {
   randomFillSync(array);
 
-  return array;
+  return array[0];
 }
 
 function sumDigitsSquared(num) {
-  let bigInt = BigInt(num);
   let total = 0n;
 
   while (num > 0) {
-    const numModBase = bigInt % 10n;
+    const numModBase = num % 10n;
     total += numModBase ** 2n;
-    bigInt /= 10n;
+    num /= 10n;
   }
 
   return total;
@@ -35,7 +34,7 @@ function isHappyCoin(num) {
 
 let count = 0;
 
-for (let i = 1; i < 10_000; i++) {
+for (let i = 1; i < 10_000_000; i++) {
   const randomNumber = random64();
 
   if (isHappyCoin(randomNumber)) {

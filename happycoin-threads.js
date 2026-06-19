@@ -12,17 +12,16 @@ const array = new BigUint64Array(1);
 function random64() {
   randomFillSync(array);
 
-  return array;
+  return array[0];
 }
 
 function sumDigitsSquared(num) {
-  let bigInt = BigInt(num);
   let total = 0n;
 
   while (num > 0) {
-    const numModBase = bigInt % 10n;
+    const numModBase = num % 10n;
     total += numModBase ** 2n;
-    bigInt /= 10n;
+    num /= 10n;
   }
 
   return total;
@@ -48,22 +47,23 @@ if (isMainThread) {
   let count = 0;
 
   for (let i = 0; i < THREAD_COUNT; i++) {
-    const worker = new Worker(fileURLToPath(import.meta.url));
+    const worker = new Worker(import.meta.filename);
 
     worker.on("message", (message) => {
       if (message === "done") {
-        console.log(`${worker.threadId}: done`);
         if (--inFlight === 0) {
           process.stdout.write(`count: ${count}\n`);
-        } else if (typeof msg === "bigint") {
-          process.stdout.write(`${message} `);
-          count++;
         }
+
+        console.log(`worker ${worker.threadId}: done`);
+      } else if (typeof message === "bigint") {
+        process.stdout.write(`${message} `);
+        count++;
       }
     });
   }
 } else {
-  const jobsToProcess = 1_000_000 / THREAD_COUNT;
+  const jobsToProcess = 10_000_000 / THREAD_COUNT;
   console.log(`worker ${threadId} jobs ${jobsToProcess}`);
 
   for (let i = 1; i < jobsToProcess; i++) {
