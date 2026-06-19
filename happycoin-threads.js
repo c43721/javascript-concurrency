@@ -1,5 +1,4 @@
 import { randomFillSync } from "node:crypto";
-import { fileURLToPath } from "node:url";
 import {
   Worker,
   isMainThread,
